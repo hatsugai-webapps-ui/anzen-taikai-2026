@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <base target="_top">
+  </head>
+  <body>
+    <input id="mode" type="hidden" value="0">
+    <h2 id="formName">安全大会2026 出席QRカメラ</h2>
+    <table width=100%>
+      <tr><td class="txt_r">
+          <input id="modeButton" type="button" onclick="onClickMode();" value="番号入力を表示">
+      </td></tr>
+    </table>
+
+    <table id="infoMsg" class="table-left" width=100%>
+      <tr>
+        <td><a id="scanMsg">こちらに読み取り結果が表示されます</a></td>
+      </tr>
+    </table>
+
+    <table id="inputTable" class="table-noBorder">
+      <tr>
+        <td colspan="8">以下に受付番号（7桁）を入力して【検索】</td>
+      </tr>
+      <tr>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input1" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input2" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input3" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input4" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input5" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c">-</td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input6" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+        <td class="txt_c"><input type="tel" maxlength="1" id="input7" name="inputId" class="txt_c input_no" onkeyup="nextfeild(this)" onfocus="this.select();"/></td>
+      </tr>
+      <tr>
+        <td class="txt_r" colspan="8">
+          <input id="sendButton" type="button" class="fs_btn" onclick="onClickSearch();" value="検索">
+        </td>
+      </tr>
+    </table>
+
+    <div id="reader" style="width:75%;">
+      <input type="file" id="file-picker">
+    </div>
+
+    <br>
+    <table id="inputUsedMsg" width=100%>
+      <tr><td>
+          ●使い方<br>
+          1.参加者の[受付番号（7桁）]を入力<br>
+          2.【検索】ボタンをクリック<br>
+          3.【出席】ボタンをクリック<br>
+          4.「～出席しました」が表示されたら完了<br>
+      </td></tr>
+    </table>
+    <table id="cameraUsedMsg" width=100%>
+      <tr><td>
+          ●使い方<br>
+          1.【Request Camera Permissions】をクリック<br>
+          2.カメラの使用を許可する<br>
+          3.【Start Scanning】をクリック<br>
+          4.参加者の[出席QRコード]をスキャンする<br>
+          5.【出席】ボタンをクリック<br>
+          6.「～出席しました」が表示されたら完了<br>
+      </td></tr>
+    </table>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- <script src="https://cozmo.github.io/jsQR/jsQR.js" type="text/javascript"></script> -->
+
+    <script>
+      
+      onClickMode();
+
+      function onClickMode(){
+
+        const doc_modeButton = document.getElementById('modeButton');
+        const doc_mode = document.getElementById('mode');
+        const doc_inputTable = document.getElementById('inputTable');
+        const doc_reader = document.getElementById('reader');
+        const doc_inputUsed = document.getElementById('inputUsedMsg');
+        const doc_cameraUsed = document.getElementById('cameraUsedMsg');
+
+        // 入力項目の表示
+        var html =  "";
+
+        const mode = doc_mode.value;
+        
+        if (mode == 1){
+          // 番号入力モードに切り替え
+          // console.log("番号入力モード");
+
+          doc_modeButton.value = "QRカメラを表示";
+          doc_inputTable.style.display = "block";
+          doc_reader.style.display = "none";
+          doc_mode.value = 0;
+          doc_inputUsed.style.display = "block";
+          doc_cameraUsed.style.display = "none";
+
+        } else {
+          // QRカメラモードに切り替え
+          // console.log("QRカメラモード");
+
+          doc_modeButton.value = "番号入力を表示";
+          doc_inputTable.style.display = "none";
+          doc_reader.style.display = "block";
+          doc_mode.value = 1;
+          doc_inputUsed.style.display = "none";
+          doc_cameraUsed.style.display = "block";
+
+        }
+        
+      }
+
+      // 文字入力後、フォーカスを変更する処理
+      function nextfeild(str) {
+        if (str.value.length >= 1) {
+          for (var i = 0, elm = document.getElementsByName('inputId'); i < elm.length; i++) {
+            if (elm[i] == str) {
+              (elm[i + 1] || elm[elm.length-1]).focus();
+              break;
+            }
+          }
+        }
+        return (str);
+      }
+
+      // スキャン実行フラグ
+      var SCAN_FLG = false;
+      // 前回読取したQR
+      var SCAN_TEXT = '';
+      
+      let QRresult = document.querySelector('#scanMsg');
+
+      const append = (decodedText) => {
+        QRresult.innerHTML = `${decodedText}`; 
+      };
+
+      // （「reader」にQRリーダーを表示）
+      let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 50, qrbox: 250});
+
+      const onScanSuccess = (decodedText) => {
+
+        if (!SCAN_FLG) {
+          // 前回と同じQRは読取しない
+          if (SCAN_TEXT == decodedText){return;}
+
+          SCAN_FLG = true;
+          SCAN_TEXT = decodedText;
+
+          append(`検索中・・・`);
+
+          google.script.run
+          .withSuccessHandler(function (ret) {
+            // スキャン成功時処理
+            append(`${ret.retAppendText}`);
+            SCAN_FLG = false;
+
+          })
+          .withFailureHandler(function (error) {
+            // スキャン失敗時処理
+            append(`"${decodedText}"を保存できません: ${error}`);
+            SCAN_FLG = false;
+          })
+          .onScan(decodedText);
+        }
+      };
+
+      html5QrcodeScanner.render(onScanSuccess);
+      
+      // // 画像ファイルからQRコードの内容を抽出
+      // async function scanQRFromFile(file) {
+
+      //   if (file == null){
+      //     return null;
+      //   }
+
+      //   const img = new Image();
+      //   img.src = URL.createObjectURL(file);
+      //   await new Promise((resolve) => img.addEventListener("load", resolve));
+      //   const canvas = document.createElement("canvas");
+      //   canvas.width = img.naturalWidth;
+      //   canvas.height = img.naturalHeight;
+      //   const ctx = canvas.getContext("2d");
+      //   ctx.imageSmoothingEnabled = false;
+      //   ctx.drawImage(img, 0, 0);
+      //   const imageData = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
+
+      //   return jsQR(imageData.data, img.naturalWidth, img.naturalHeight)?.data;
+      // }
+
+      // const filePicker = document.getElementById("file-picker");
+      // filePicker.addEventListener("change", async (e) => {
+
+      //   append('QRコードを照合中');
+      //   // const code = null;
+      //   const code = await scanQRFromFile(e.target.files[0]);
+
+      //   if (code == null){
+      //     append('<a class="red_font">'+'無効のコードです（'+code+'）</a>');
+      //     return;
+      //   }
+
+      //   if (SCAN_TEXT == code){
+      //     append('<a class="red_font">'+'前回と同じQRコードです'+'</a>');
+      //     return;
+      //   }
+
+      //   onCodeSerch(code);
+      // });
+
+      function onCodeSerch(search_text){
+
+        if (!SCAN_FLG) {
+          // 前回と同じQRは読取しない
+          if (SCAN_TEXT == search_text){return;}
+
+          SCAN_FLG = true;
+          SCAN_TEXT = search_text;
+
+          append(`検索中・・・`);
+
+          google.script.run
+          .withSuccessHandler(function (ret) {
+            // 検索成功時処理
+            append(`${ret.retAppendText}`);
+            SCAN_FLG = false;
+
+          })
+          .withFailureHandler(function (error) {
+            // 検索失敗時処理
+            append(`"${search_text}"を保存できません: ${error}`);
+            SCAN_FLG = false;
+          })
+          .onScan(search_text);
+        }
+
+      }
+
+      function onClickSearch(){
+
+        const doc1 = document.getElementsByName("inputId");
+        var comp_id = "";
+        var user_id = "";
+
+        if(doc1){
+          comp_id += doc1[0].value;
+          comp_id += doc1[1].value;
+          comp_id += doc1[2].value;
+          comp_id += doc1[3].value;
+          comp_id += doc1[4].value;
+          user_id += doc1[5].value;
+          user_id += doc1[6].value;
+        }
+
+        onCodeSerch(comp_id +","+ user_id);
+
+      }
+
+      // 出席ボタン押下時処理
+      function onClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp){
+        SCAN_FLG = true;
+        append(`出席処理中・・・`);
+        google.script.run.withSuccessHandler(doClickEntrySuccess).withFailureHandler(doClickEntryFailure).doClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp);
+      }
+
+      function doClickEntrySuccess(ret){
+        append(ret.retAppendText);
+        SCAN_FLG = false;
+      }
+
+      function doClickEntryFailure(){
+        alert("【出席】処理に失敗しました");
+        append(`【出席】処理に失敗しました`);
+        SCAN_FLG = false;
+      }
+
+    </script>
+  </body>
+</html>
