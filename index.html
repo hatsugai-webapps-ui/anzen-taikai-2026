@@ -130,7 +130,9 @@
       var SCAN_FLG = false;
       // 前回読取したQR
       var SCAN_TEXT = '';
-      
+      // 出欠WebAPI
+      let API_URL = "https://script.google.com/macros/s/AKfycbzSYxTJurlL23vxix3iizEYRwSQ1M-u3qnvc0jGbuKDf8Z7605f4wPRFOjYnmo5lRu2/exec";
+
       let QRresult = document.querySelector('#scanMsg');
 
       const append = (decodedText) => {
@@ -182,9 +184,11 @@
 
           append(`検索中・・・`);
 
+          onClickScan(search_text);
+          
           // ここからテスト用
-          append("["+search_text+"]を<br>読み込みました！");
-          SCAN_FLG = false;
+          // append("["+search_text+"]を<br>読み込みました！");
+          // SCAN_FLG = false;
           // ここまでテスト用
           
           // google.script.run
@@ -204,6 +208,48 @@
 
       }
 
+      function onClickScan(scanText){
+        append("検索中・・・");
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", API_URL + "?mode=scan&scanText="+scanText);
+        xhr.send();
+        xhr.responseType = "json";
+        xhr.onload = () => {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            const data = xhr.response;
+            append(data.retAppendText);
+            SCAN_FLG = false;
+          } else {
+            append(`Error: ${xhr.status}`);
+            SCAN_FLG = false;
+          }
+        };
+      }
+
+      // 出席ボタン押下時処理
+      function onClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp){
+        SCAN_FLG = true;
+        append(`出席処理中・・・`);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", API_URL + "?mode=entry&compId="+scanCompId+"&userId="+scanUserId+"&ansDate="+scanAnsDate+"&compRow="+row_comp);
+        xhr.send();
+        xhr.responseType = "json";
+        xhr.onload = () => {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            const data = xhr.response;
+            append(data.retAppendText);
+            SCAN_FLG = false;
+
+          } else {
+            append(`Error: ${xhr.status}`);
+            SCAN_FLG = false;
+          }
+        };
+        
+      }
+      
       function onClickSearch(){
 
         const doc1 = document.getElementsByName("inputId");
