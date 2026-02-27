@@ -73,20 +73,15 @@
       
       onClickMode();
 
+      // 入力モードの変更処理
       function onClickMode(){
-
         // const doc_modeButton = document.getElementById('modeButton');
         const doc_mode = document.getElementById('mode');
         const doc_inputTable = document.getElementById('inputTable');
         const doc_reader = document.getElementById('reader');
         const doc_inputUsed = document.getElementById('inputUsedMsg');
         const doc_cameraUsed = document.getElementById('cameraUsedMsg');
-
-        // 入力項目の表示
-        var html =  "";
-
         const mode = doc_mode.value;
-        
         if (mode == 1){
           // 番号入力モードに切り替え
           // console.log("番号入力モード");
@@ -108,9 +103,7 @@
           doc_mode.value = 1;
           doc_inputUsed.style.display = "none";
           doc_cameraUsed.style.display = "block";
-
         }
-        
       }
 
       // 文字入力後、フォーカスを変更する処理
@@ -130,87 +123,42 @@
       var SCAN_FLG = false;
       // 前回読取したQR
       var SCAN_TEXT = '';
-      // 出欠WebAPI
+      // 出欠WebAPIのURL
       let API_URL = "https://script.google.com/macros/s/AKfycbzSYxTJurlL23vxix3iizEYRwSQ1M-u3qnvc0jGbuKDf8Z7605f4wPRFOjYnmo5lRu2/exec";
 
       let QRresult = document.querySelector('#scanMsg');
 
+      // 画面にappendの内容を表示
       const append = (decodedText) => {
         QRresult.innerHTML = `${decodedText}`; 
       };
 
       // （「reader」にQRリーダーを表示）
       let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 50, qrbox: 250});
-
+      // スキャン時
       const onScanSuccess = (decodedText) => {
-
         onCodeSerch(decodedText);
-        
-        // if (!SCAN_FLG) {
-        //   // 前回と同じQRは読取しない
-        //   if (SCAN_TEXT == decodedText){return;}
-
-        //   SCAN_FLG = true;
-        //   SCAN_TEXT = decodedText;
-
-        //   append(`検索中・・・`);
-
-        //   google.script.run
-        //   .withSuccessHandler(function (ret) {
-        //     // スキャン成功時処理
-        //     append(`${ret.retAppendText}`);
-        //     SCAN_FLG = false;
-
-        //   })
-        //   .withFailureHandler(function (error) {
-        //     // スキャン失敗時処理
-        //     append(`"${decodedText}"を保存できません: ${error}`);
-        //     SCAN_FLG = false;
-        //   })
-        //   .onScan(decodedText);
-        // }
       };
 
       html5QrcodeScanner.render(onScanSuccess);
       
       function onCodeSerch(search_text){
-
         if (!SCAN_FLG) {
           // 前回と同じQRは読取しない
           if (SCAN_TEXT == search_text){return;}
 
           SCAN_FLG = true;
           SCAN_TEXT = search_text;
-
-          append(`検索中・・・`);
-
+          
           onClickScan(search_text);
-          
-          // ここからテスト用
-          // append("["+search_text+"]を<br>読み込みました！");
-          // SCAN_FLG = false;
-          // ここまでテスト用
-          
-          // google.script.run
-          // .withSuccessHandler(function (ret) {
-          //   // 検索成功時処理
-          //   append(`${ret.retAppendText}`);
-          //   SCAN_FLG = false;
-
-          // })
-          // .withFailureHandler(function (error) {
-          //   // 検索失敗時処理
-          //   append(`"${search_text}"を保存できません: ${error}`);
-          //   SCAN_FLG = false;
-          // })
-          // .onScan(search_text);
         }
-
       }
 
+      // スキャン時処理
       function onClickScan(scanText){
         append("検索中・・・");
 
+        // API側で【スキャン】時の処理を実行
         const xhr = new XMLHttpRequest();
         xhr.open("GET", API_URL + "?mode=scan&scanText="+scanText);
         xhr.send();
@@ -227,11 +175,12 @@
         };
       }
 
-      // 出席ボタン押下時処理
+      // 【出席】ボタン押下時処理
       function onClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp){
         SCAN_FLG = true;
         append(`出席処理中・・・`);
 
+        // API側で【出席】時の処理を実行
         const xhr = new XMLHttpRequest();
         xhr.open("GET", API_URL + "?mode=entry&compId="+scanCompId+"&userId="+scanUserId+"&ansDate="+scanAnsDate+"&compRow="+row_comp);
         xhr.send();
@@ -247,29 +196,8 @@
             SCAN_FLG = false;
           }
         };
-        
       }
       
-      function onClickSearch(){
-
-        const doc1 = document.getElementsByName("inputId");
-        var comp_id = "";
-        var user_id = "";
-
-        if(doc1){
-          comp_id += doc1[0].value;
-          comp_id += doc1[1].value;
-          comp_id += doc1[2].value;
-          comp_id += doc1[3].value;
-          comp_id += doc1[4].value;
-          user_id += doc1[5].value;
-          user_id += doc1[6].value;
-        }
-
-        onCodeSerch(comp_id +","+ user_id);
-
-      }
-
     </script>
   </body>
 </html>
