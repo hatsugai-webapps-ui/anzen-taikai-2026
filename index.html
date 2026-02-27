@@ -7,7 +7,7 @@
   </head>
   <body>
     <input id="mode" type="hidden" value="0">
-    <h2 id="formName">安全大会2026 出席QRカメラ（テスト中）</h2>
+    <h2 id="formName">安全大会2026 出席QRカメラ（GitHubテスト版）</h2>
     <table width=100%>
       <tr><td class="txt_r">
           <input id="modeButton" type="button" onclick="onClickMode();" value="番号入力を表示">
@@ -68,7 +68,6 @@
     </table>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <!-- <script src="https://cozmo.github.io/jsQR/jsQR.js" type="text/javascript"></script> -->
 
     <script>
       
@@ -143,74 +142,35 @@
 
       const onScanSuccess = (decodedText) => {
 
-        if (!SCAN_FLG) {
-          // 前回と同じQRは読取しない
-          if (SCAN_TEXT == decodedText){return;}
+        onCodeSerch(decodedText);
+        
+        // if (!SCAN_FLG) {
+        //   // 前回と同じQRは読取しない
+        //   if (SCAN_TEXT == decodedText){return;}
 
-          SCAN_FLG = true;
-          SCAN_TEXT = decodedText;
+        //   SCAN_FLG = true;
+        //   SCAN_TEXT = decodedText;
 
-          append(`検索中・・・`);
+        //   append(`検索中・・・`);
 
-          google.script.run
-          .withSuccessHandler(function (ret) {
-            // スキャン成功時処理
-            append(`${ret.retAppendText}`);
-            SCAN_FLG = false;
+        //   google.script.run
+        //   .withSuccessHandler(function (ret) {
+        //     // スキャン成功時処理
+        //     append(`${ret.retAppendText}`);
+        //     SCAN_FLG = false;
 
-          })
-          .withFailureHandler(function (error) {
-            // スキャン失敗時処理
-            append(`"${decodedText}"を保存できません: ${error}`);
-            SCAN_FLG = false;
-          })
-          .onScan(decodedText);
-        }
+        //   })
+        //   .withFailureHandler(function (error) {
+        //     // スキャン失敗時処理
+        //     append(`"${decodedText}"を保存できません: ${error}`);
+        //     SCAN_FLG = false;
+        //   })
+        //   .onScan(decodedText);
+        // }
       };
 
       html5QrcodeScanner.render(onScanSuccess);
       
-      // // 画像ファイルからQRコードの内容を抽出
-      // async function scanQRFromFile(file) {
-
-      //   if (file == null){
-      //     return null;
-      //   }
-
-      //   const img = new Image();
-      //   img.src = URL.createObjectURL(file);
-      //   await new Promise((resolve) => img.addEventListener("load", resolve));
-      //   const canvas = document.createElement("canvas");
-      //   canvas.width = img.naturalWidth;
-      //   canvas.height = img.naturalHeight;
-      //   const ctx = canvas.getContext("2d");
-      //   ctx.imageSmoothingEnabled = false;
-      //   ctx.drawImage(img, 0, 0);
-      //   const imageData = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
-
-      //   return jsQR(imageData.data, img.naturalWidth, img.naturalHeight)?.data;
-      // }
-
-      // const filePicker = document.getElementById("file-picker");
-      // filePicker.addEventListener("change", async (e) => {
-
-      //   append('QRコードを照合中');
-      //   // const code = null;
-      //   const code = await scanQRFromFile(e.target.files[0]);
-
-      //   if (code == null){
-      //     append('<a class="red_font">'+'無効のコードです（'+code+'）</a>');
-      //     return;
-      //   }
-
-      //   if (SCAN_TEXT == code){
-      //     append('<a class="red_font">'+'前回と同じQRコードです'+'</a>');
-      //     return;
-      //   }
-
-      //   onCodeSerch(code);
-      // });
-
       function onCodeSerch(search_text){
 
         if (!SCAN_FLG) {
@@ -222,19 +182,21 @@
 
           append(`検索中・・・`);
 
-          google.script.run
-          .withSuccessHandler(function (ret) {
-            // 検索成功時処理
-            append(`${ret.retAppendText}`);
-            SCAN_FLG = false;
+          append("["+search_text+"]を<br>読み込みました！");
 
-          })
-          .withFailureHandler(function (error) {
-            // 検索失敗時処理
-            append(`"${search_text}"を保存できません: ${error}`);
-            SCAN_FLG = false;
-          })
-          .onScan(search_text);
+          // google.script.run
+          // .withSuccessHandler(function (ret) {
+          //   // 検索成功時処理
+          //   append(`${ret.retAppendText}`);
+          //   SCAN_FLG = false;
+
+          // })
+          // .withFailureHandler(function (error) {
+          //   // 検索失敗時処理
+          //   append(`"${search_text}"を保存できません: ${error}`);
+          //   SCAN_FLG = false;
+          // })
+          // .onScan(search_text);
         }
 
       }
