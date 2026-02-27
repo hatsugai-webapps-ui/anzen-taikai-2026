@@ -8,11 +8,11 @@
   <body>
     <input id="mode" type="hidden" value="0">
     <h2 id="formName">安全大会2026 出席QRカメラ（GitHubテスト版）</h2>
-    <table width=100%>
+    <!-- <table width=100%>
       <tr><td class="txt_r">
           <input id="modeButton" type="button" onclick="onClickMode();" value="番号入力を表示">
       </td></tr>
-    </table>
+    </table> -->
 
     <table id="infoMsg" class="table-left" width=100%>
       <tr>
@@ -75,7 +75,7 @@
 
       function onClickMode(){
 
-        const doc_modeButton = document.getElementById('modeButton');
+        // const doc_modeButton = document.getElementById('modeButton');
         const doc_mode = document.getElementById('mode');
         const doc_inputTable = document.getElementById('inputTable');
         const doc_reader = document.getElementById('reader');
@@ -91,7 +91,7 @@
           // 番号入力モードに切り替え
           // console.log("番号入力モード");
 
-          doc_modeButton.value = "QRカメラを表示";
+          // doc_modeButton.value = "QRカメラを表示";
           doc_inputTable.style.display = "block";
           doc_reader.style.display = "none";
           doc_mode.value = 0;
@@ -102,7 +102,7 @@
           // QRカメラモードに切り替え
           // console.log("QRカメラモード");
 
-          doc_modeButton.value = "番号入力を表示";
+          // doc_modeButton.value = "番号入力を表示";
           doc_inputTable.style.display = "none";
           doc_reader.style.display = "block";
           doc_mode.value = 1;
@@ -182,8 +182,11 @@
 
           append(`検索中・・・`);
 
+          // ここからテスト用
           append("["+search_text+"]を<br>読み込みました！");
-
+          SCAN_FLG = true;
+          // ここまでテスト用
+          
           // google.script.run
           // .withSuccessHandler(function (ret) {
           //   // 検索成功時処理
