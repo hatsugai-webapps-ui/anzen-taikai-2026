@@ -36,7 +36,7 @@
       </tr>
       <tr>
         <td class="txt_r" colspan="8">
-          <input id="sendButton" type="button" class="fs_btn" onclick="onClickSearch();" value="検索">
+          <input id="sendButton" type="button" class="fs_btn" onclick="();" value="検索">
         </td>
       </tr>
     </table>
@@ -268,24 +268,6 @@
 
         onCodeSerch(comp_id +","+ user_id);
 
-      }
-
-      // 出席ボタン押下時処理
-      function onClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp){
-        SCAN_FLG = true;
-        append(`出席処理中・・・`);
-        google.script.run.withSuccessHandler(doClickEntrySuccess).withFailureHandler(doClickEntryFailure).doClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp);
-      }
-
-      function doClickEntrySuccess(ret){
-        append(ret.retAppendText);
-        SCAN_FLG = false;
-      }
-
-      function doClickEntryFailure(){
-        alert("【出席】処理に失敗しました");
-        append(`【出席】処理に失敗しました`);
-        SCAN_FLG = false;
       }
 
     </script>
