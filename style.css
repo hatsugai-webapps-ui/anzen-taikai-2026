@@ -1,0 +1,95 @@
+/* ------------------------------------ */
+/* フォーム共通書式 */
+/* ------------------------------------ */
+/* labelタグ：項目のラベルと入力欄を囲うタグ */
+
+.form_block {
+  display: grid;
+  /* grid-template-columns: 14em 1fr; */
+  border-top: 1px dotted #606060;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  /* align-items: center; */
+  height: auto;
+}
+
+.formCounter_over,
+.textError,
+.red_font {
+  color: red;
+}
+
+.green_font {
+  color: green;
+}
+
+.table-left > tbody > tr > th{
+  /*緑*/
+  background-color: #d4e4a5;
+  font-weight: normal;
+}
+
+.table-left{
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-left-style: solid;
+  border-left-width: 1px;
+}
+
+.table-left th {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-right-style: solid;
+  border-right-width: 1px;
+  font-size: 1.04rem;
+  padding: 4px 5px;
+  text-align: left;
+}
+
+.table-left td {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-right-style: solid;
+  border-right-width: 1px;
+  font-size: 1rem;
+  padding: 4px 5px;
+  text-align: left;
+}
+
+/* ボーダーなしテーブル */
+.table-noBorder,
+.table-noBorder td,
+.table-noBorder th,
+.table-noBorder tr {
+  border: 0!important;
+}
+
+.no_w {
+  white-space: nowrap!important;
+}
+
+.url_warp {
+  word-break: break-all;
+}
+
+.txt_c {
+  text-align: center!important;
+}
+
+.txt_r {
+  text-align: right!important;
+}
+
+.fs_no {
+  font-size: 1.67rem!important;
+}
+
+.fs_btn {
+  font-size: 1.67rem!important;
+}
+
+/* テキストボックスの特定のスタイル */
+.input_no {
+  font-size: 1.67rem!important;
+  width: 40%;
+}
