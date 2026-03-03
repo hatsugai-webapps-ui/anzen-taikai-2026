@@ -176,13 +176,13 @@
       }
 
       // 【出席】ボタン押下時処理
-      function onClickEntry(scanCompId, scanUserId, scanAnsDate, row_comp){
+      function onClickEntry(scanCompKbn, scanCompId, scanUserId, scanAnsDate, row_comp){
         SCAN_FLG = true;
         append(`出席処理中・・・`);
 
         // API側で【出席】時の処理を実行
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", API_URL + "?mode=entry&compId="+scanCompId+"&userId="+scanUserId+"&ansDate="+scanAnsDate+"&compRow="+row_comp);
+        xhr.open("GET", API_URL + "?mode=entry&compKbn="+scanCompKbn+"&compId="+scanCompId+"&userId="+scanUserId+"&ansDate="+scanAnsDate+"&compRow="+row_comp);
         xhr.send();
         xhr.responseType = "json";
         xhr.onload = () => {
